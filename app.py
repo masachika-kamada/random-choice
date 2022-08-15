@@ -3,12 +3,19 @@ import random
 import streamlit.components.v1 as stc
 
 
+@st.cache(allow_output_mutation=True)
+def cache_lst():
+    with open("data.txt", mode="r", encoding="utf-8") as f:
+        lst = f.read().splitlines()
+    random.shuffle(lst)
+    return lst
+
+
 def main():
     st.markdown("<h1 style='text-align: center; color: red;'>Fun Community 仲良くなろうの会</h1>",
             unsafe_allow_html=True)
     clicked = st.button("お題を決める")
-    with open("data.txt", mode="r", encoding="utf-8") as f:
-        themes = f.read().splitlines()
+    themes = cache_lst()
 
     # css作成
     button_css = """
@@ -30,10 +37,12 @@ def main():
     # css適用
     st.markdown(button_css, unsafe_allow_html=True)
 
+    if "count" not in st.session_state:
+        st.session_state.count = 0
+
     if clicked:
-        idx = random.randrange(len(themes))
         stc.html(f"""
-        <h1 class='title'>{themes[idx]}</h1>
+        <h1 class='title'>{themes[st.session_state.count % len(themes)]}</h1>
         <style>
         .title {{
             text-align: center;
@@ -42,6 +51,7 @@ def main():
         }}
         </style>
         """)
+        st.session_state.count += 1
 
 
 if __name__ == "__main__":
