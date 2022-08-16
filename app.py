@@ -50,7 +50,7 @@ def main():
             font-size:60px;
         }}
         </style>
-        """)
+        """, height=200)
         st.session_state.count += 1
 
 
